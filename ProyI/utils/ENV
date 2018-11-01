@@ -1,0 +1,14 @@
+#!/bin/bash
+
+LM_LICENSE_FILE=10235@liclin1.houston.hpecorp.net,10235@liclin2.houston.hpecorp.net,10235@liclin3.houston.hpecorp.net:33104@liclin1.houston.hpecorp.net,33104@liclin2.houston.hpecorp.net,33104@liclin3.houston.hpecorp.net:1700@liclin1.houston.hpecorp.net,1700@liclin2.houston.hpecorp.net,1700@liclin3.houston.hpecorp.net:8224@liclin1.houston.hpecorp.net,8224@liclin2.houston.hpecorp.net,8224@liclin3.houston.hpecorp.net
+export LM_LICENSE_FILE
+
+CDS_LIC_FILE=5280@liclin2.houston.hpecorp.net,5280@liclin3.houston.hpecorp.net,5280@liclin1.houston.hpecorp.net
+export CDS_LIC_FILE
+
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/p/svl/p1/proj_tools/cadence/ius-15.20_s006/tools.lnx86/lib/64bit
+export LD_LIBRARY_PATH
+
+PATH=$PATH:/p/svl/p1/proj_tools/cadence/ius-15.20_s006/tools.lnx86/bin/64bit
+export PATH
+
