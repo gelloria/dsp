@@ -54,24 +54,25 @@ module tb_top();
         .cfg_colbits        (2'b00              ), // 8 Bit Column Address
 
         /* WISH BONE */
-        .wb_rst_i           (wb.reset           ),
         .wb_clk_i           (wb.clk             ),
+        .wb_rst_i           (wb.reset           ),
 
-        .wb_stb_i           (wb.stb_i           ),
-        .wb_ack_o           (wb.ack_o           ),
         .wb_addr_i          (wb.addr_i          ),
-        .wb_we_i            (wb.we_i            ),
         .wb_dat_i           (wb.dat_i           ),
-        .wb_sel_i           (wb.sel_i           ),
         .wb_dat_o           (wb.dat_o           ),
+        .wb_sel_i           (wb.sel_i           ),
+        .wb_we_i            (wb.we_i            ),
+        .wb_stb_i           (wb.stb_i           ),
         .wb_cyc_i           (wb.cyc_i           ),
+        .wb_ack_o           (wb.ack_o           ),
         .wb_cti_i           (wb.cti_i           ),
 
         /* Interface to SDRAMs */
         .sdram_clk          (sdram.clk          ),
         .sdram_resetn       (sdram.reset_n      ),
-        .sdr_cs_n           (sdram.cs_n         ),
+ 
         .sdr_cke            (sdram.cke          ),
+        .sdr_cs_n           (sdram.cs_n         ),
         .sdr_ras_n          (sdram.ras_n        ),
         .sdr_cas_n          (sdram.cas_n        ),
         .sdr_we_n           (sdram.we_n         ),
@@ -96,9 +97,6 @@ module tb_top();
     );
 
    IS42VM16400K u_sdram16 (
-          .dq                 (sdram.dq           ),
-          .addr               (sdram.addr[11:0]   ),
-          .ba                 (sdram.ba           ),
           .clk                (clk_d              ),
           .cke                (sdram.cke          ),
           .csb                (sdram.cs_n         ),
@@ -106,6 +104,9 @@ module tb_top();
           .casb               (sdram.cas_n        ),
           .web                (sdram.we_n         ),
           .dqm                (sdram.dqm          )
+          .ba                 (sdram.ba           ),
+          .addr               (sdram.addr[11:0]   ),
+          .dq                 (sdram.dq           ),
     );
 
     initial begin
