@@ -5,6 +5,7 @@
 * |---------------------------------------------------------------|
 */
 
+`timescale 1ns/1ps
 interface sdram_ifc#(
     parameter DATA_SZ_P  = 32,
     parameter ADDR_SZ_P  = 10
