@@ -6,16 +6,20 @@
 */
 
 `timescale 1ns/1ps
-interface sdram_ifc#(
-    parameter DATA_SZ_P  = 32,
-    parameter ADDR_SZ_P  = 10
-);
-
+interface sdram_ifc();
     logic clk;
-    logic reset;
+    logic reset_n;
 
-    logic                   cmd;
-    logic [ADDR_SZ_P-1:0]   addr;
-    logic [DATA_SZ_P-1:0]   data;
+    wire [15:0]            dq; // SDRAM Read/Write Data Bus
+    logic [1:0]            dqm; // SDRAM DATA Mask
+    logic [1:0]            ba; // SDRAM Bank Select
+    logic [12:0]           addr; // SDRAM ADRESS
+    logic                  init_done; // SDRAM Init Done
+
+    logic we_n;
+    logic cas_n;
+    logic ras_n;
+    logic cke;
+    logic cs_n;
 
 endinterface : sdram_ifc

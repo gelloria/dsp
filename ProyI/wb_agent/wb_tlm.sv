@@ -6,13 +6,13 @@
 */
 
 typedef enum {
-    READ,
-    WRITE
+    WBREAD,
+    WBWRITE
 } wb_cmd;
 
 class wb_tlm extends uvm_sequence_item;
 
-    rand wb_cmd  cmd;
+    rand wb_cmd     cmd;
     rand int        data;
     rand int        addr;
 

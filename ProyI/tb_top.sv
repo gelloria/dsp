@@ -6,6 +6,7 @@
 */
 
 `include "sdram_ifc.svh"
+`include "wb_ifc.svh"
 
 
 import uvm_pkg::*;
@@ -31,78 +32,56 @@ import sdram_pkg::*;
 
 
 module tb_top();
-
-    sdram_ifc sdram();
-
-    initial begin
-        uvm_config_db#(virtual sdram_ifc)::set(uvm_root::get(), "*", "sdram_ifc", sdram);
-
-        run_test("sdram_test");
-    end
-
-    // Instantiate DUT
     reg RESETN;
-    reg sdram_clk;
-    reg sys_clk;
+    assign sdram.reset_n = RESETN;
+    assign wb.reset = ~RESETN;
 
     //--------------------------------------
     // Wish Bone Interface
     // -------------------------------------
-    reg             wb_stb_i;
-    wire            wb_ack_o;
-    reg  [25:0]     wb_addr_i;
-    reg             wb_we_i; // 1 - Write, 0 - Read
-    reg  [32-1:0]   wb_dat_i;
-    reg  [32/8-1:0] wb_sel_i; // Byte enable
-    wire  [32-1:0]  wb_dat_o;
-    reg             wb_cyc_i;
-    reg   [2:0]     wb_cti_i;
+    wb_ifc wb();
 
     //--------------------------------------------
     // SDRAM I/F
     //--------------------------------------------
-    wire [15:0]           Dq; // SDRAM Read/Write Data Bus
-    wire [1:0]            sdr_dqm; // SDRAM DATA Mask
-    wire [1:0]            sdr_ba; // SDRAM Bank Select
-    wire [12:0]           sdr_addr; // SDRAM ADRESS
-    wire                  sdr_init_done; // SDRAM Init Done
+    sdram_ifc sdram();
 
     // to fix the sdram interface timing issue
-    wire #(2.0) sdram_clk_d = sdram_clk;
+    wire #(2.0) clk_d = sdram.clk;
 
     sdrc_top #(.SDR_DW(16),.SDR_BW(2)) u_dut(
         .cfg_sdr_width      (2'b01              ),
         .cfg_colbits        (2'b00              ), // 8 Bit Column Address
 
         /* WISH BONE */
-        .wb_rst_i           (!RESETN            ),
-        .wb_clk_i           (sys_clk            ),
+        .wb_rst_i           (wb.reset           ),
+        .wb_clk_i           (wb.clk             ),
 
-        .wb_stb_i           (wb_stb_i           ),
-        .wb_ack_o           (wb_ack_o           ),
-        .wb_addr_i          (wb_addr_i          ),
-        .wb_we_i            (wb_we_i            ),
-        .wb_dat_i           (wb_dat_i           ),
-        .wb_sel_i           (wb_sel_i           ),
-        .wb_dat_o           (wb_dat_o           ),
-        .wb_cyc_i           (wb_cyc_i           ),
-        .wb_cti_i           (wb_cti_i           ),
+        .wb_stb_i           (wb.stb_i           ),
+        .wb_ack_o           (wb.ack_o           ),
+        .wb_addr_i          (wb.addr_i          ),
+        .wb_we_i            (wb.we_i            ),
+        .wb_dat_i           (wb.dat_i           ),
+        .wb_sel_i           (wb.sel_i           ),
+        .wb_dat_o           (wb.dat_o           ),
+        .wb_cyc_i           (wb.cyc_i           ),
+        .wb_cti_i           (wb.cti_i           ),
 
         /* Interface to SDRAMs */
-        .sdram_clk          (sdram_clk          ),
-        .sdram_resetn       (RESETN             ),
-        .sdr_cs_n           (sdr_cs_n           ),
-        .sdr_cke            (sdr_cke            ),
-        .sdr_ras_n          (sdr_ras_n          ),
-        .sdr_cas_n          (sdr_cas_n          ),
-        .sdr_we_n           (sdr_we_n           ),
-        .sdr_dqm            (sdr_dqm            ),
-        .sdr_ba             (sdr_ba             ),
-        .sdr_addr           (sdr_addr           ),
-        .sdr_dq             (Dq                 ),
+        .sdram_clk          (sdram.clk          ),
+        .sdram_resetn       (sdram.reset_n      ),
+        .sdr_cs_n           (sdram.cs_n         ),
+        .sdr_cke            (sdram.cke          ),
+        .sdr_ras_n          (sdram.ras_n        ),
+        .sdr_cas_n          (sdram.cas_n        ),
+        .sdr_we_n           (sdram.we_n         ),
+        .sdr_dqm            (sdram.dqm          ),
+        .sdr_ba             (sdram.ba           ),
+        .sdr_addr           (sdram.addr         ),
+        .sdr_dq             (sdram.dq           ),
 
         /* Parameters */
-        .sdr_init_done      (sdr_init_done      ),
+        .sdr_init_done      (sdram.init_done    ),
         .cfg_req_depth      (2'h3               ), //how many req. buffer should hold
         .cfg_sdr_en         (1'b1               ),
         .cfg_sdr_mode_reg   (13'h033            ),
@@ -117,15 +96,22 @@ module tb_top();
     );
 
    IS42VM16400K u_sdram16 (
-          .dq                 (Dq                 ),
-          .addr               (sdr_addr[11:0]     ),
-          .ba                 (sdr_ba             ),
-          .clk                (sdram_clk_d        ),
-          .cke                (sdr_cke            ),
-          .csb                (sdr_cs_n           ),
-          .rasb               (sdr_ras_n          ),
-          .casb               (sdr_cas_n          ),
-          .web                (sdr_we_n           ),
-          .dqm                (sdr_dqm            )
+          .dq                 (sdram.dq           ),
+          .addr               (sdram.addr[11:0]   ),
+          .ba                 (sdram.ba           ),
+          .clk                (clk_d              ),
+          .cke                (sdram.cke          ),
+          .csb                (sdram.cs_n         ),
+          .rasb               (sdram.ras_n        ),
+          .casb               (sdram.cas_n        ),
+          .web                (sdram.we_n         ),
+          .dqm                (sdram.dqm          )
     );
+
+    initial begin
+        uvm_config_db#(virtual sdram_ifc)::set(uvm_root::get(), "*", "sdram_ifc", sdram);
+        uvm_config_db#(virtual wb_ifc)::set(uvm_root::get(), "*", "wb_ifc", wb);
+
+        run_test("sdram_test");
+    end
 endmodule
