@@ -10,6 +10,13 @@ package sdram_pkg;
     `include "sdram_monitor.sv"
     `include "sdram_agent.sv"
 
+    //WB agent
+    `include "wb_tlm.sv"
+    `include "wb_sequencer.sv"
+    `include "wb_driver.sv"
+    `include "wb_monitor.sv"
+    `include "wb_agent.sv"
+
     //Scoreboard
     `include "sdram_scoreboard.sv"
 
