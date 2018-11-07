@@ -121,7 +121,6 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
         do
             @(posedge vif_wb.clk);
         while(vif_wb.ack_o!='d0);
-        `uvm_info("SDRAM DRV", "READ acked.", UVM_LOW);
 
         vif_wb.stb_i       <= 0;
         vif_wb.cyc_i       <= 0;

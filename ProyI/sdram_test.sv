@@ -55,6 +55,26 @@ class sdram_test extends uvm_test;
         seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
         ok = seq.randomize() with {
             cmd == WRITE;
+            addr == 'd2;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == READ;
+            addr == 'd2;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == WRITE;
             addr == 'd3;
         };
         assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
@@ -66,6 +86,106 @@ class sdram_test extends uvm_test;
         ok = seq.randomize() with {
             cmd == READ;
             addr == 'd3;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == WRITE;
+            addr == 'd4;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == READ;
+            addr == 'd4;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == WRITE;
+            addr == 'd5;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == READ;
+            addr == 'd5;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == WRITE;
+            addr == 'd6;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == READ;
+            addr == 'd6;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == WRITE;
+            addr == 'd7;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == READ;
+            addr == 'd7;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == WRITE;
+            addr == 'd8;
+        };
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = seq.randomize() with {
+            cmd == READ;
+            addr == 'd8;
         };
         assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
         seq.start(env.agent.sequencer);

@@ -26,4 +26,8 @@ class sdram_tlm extends uvm_sequence_item;
         super.new(name);
     endfunction : new
 
+    function string print();
+        return $psprintf("%s, addr: 0x%0h, data: 0x%0h", cmd.name, addr, data);
+    endfunction
+
 endclass : sdram_tlm

@@ -9,7 +9,6 @@ class sdram_monitor extends uvm_monitor;
 
     virtual sdram_ifc vif_sdram;
     virtual wb_ifc vif_wb;
-    sdram_tlm tlm;
 
     uvm_analysis_port#(sdram_tlm) ch_out;
 
@@ -45,33 +44,42 @@ class sdram_monitor extends uvm_monitor;
 
 
     task mon_write();
+        sdram_tlm tlm;
         forever begin
             @(negedge vif_wb.clk)
             if (vif_wb.we_i == 1 && vif_wb.stb_i == 1) begin
-                `uvm_info("SDRAM MON", "Write start detected", UVM_LOW);
+                tlm = new();
+                tlm.cmd = WRITE;
+                tlm.addr = vif_wb.addr_i;
+                tlm.data = vif_wb.dat_i;
                 do
                     @(posedge vif_wb.clk);
                 while(vif_wb.ack_o!='d0);
-                `uvm_info("SDRAM MON", "Write end detected", UVM_LOW);
+                `uvm_info("SDRAM MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
+                ch_out.put(tlm);
             end
         end
     endtask
 
     logic [31:0] prev_data;
     task mon_read();
+        sdram_tlm tlm;
         forever begin
             @(negedge vif_wb.clk)
             if (vif_wb.we_i == 0 && vif_wb.stb_i == 1) begin
-                `uvm_info("SDRAM MON", "Read start detected", UVM_LOW);
+                tlm = new();
+                tlm.cmd = READ;
+                tlm.addr = vif_wb.addr_i;
                 do
                     @(posedge vif_wb.clk);
                 while(vif_wb.ack_o!='d0);
-                `uvm_info("SDRAM MON", "Read ackded", UVM_LOW);
                 do begin
                     prev_data = vif_wb.dat_o;
                     @(posedge vif_wb.clk);
                 end while(vif_wb.dat_o === prev_data);
-                `uvm_info("SDRAM MON", "Read end detected", UVM_LOW);
+                tlm.data = vif_wb.dat_o;
+                `uvm_info("SDRAM MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
+                ch_out.put(tlm);
             end
         end
     endtask
