@@ -39,7 +39,7 @@ class sdram_monitor extends uvm_monitor;
 
 
     task mon();
-        `uvm_info("SDRAM MON", "Function to monitore the DUT pins.", UVM_LOW);
+        `uvm_info("SDRAM MON", "Function to monitor the DUT pins.", UVM_LOW);
     endtask
 
 endclass : sdram_monitor
