@@ -6,6 +6,7 @@
 */
 
 typedef enum {
+    RESET,
     READ,
     WRITE
 } sdram_cmd;
