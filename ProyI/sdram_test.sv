@@ -35,7 +35,7 @@ class sdram_test extends uvm_test;
         seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
         ok = seq.randomize() with {
             cmd == WRITE;
-            addr == 'd1;
+            addr == 'h1ff;
         };
         assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
         seq.start(env.agent.sequencer);
@@ -45,7 +45,7 @@ class sdram_test extends uvm_test;
         seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
         ok = seq.randomize() with {
             cmd == READ;
-            addr == 'd1;
+            addr == 'h1ff;
         };
         assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
         seq.start(env.agent.sequencer);

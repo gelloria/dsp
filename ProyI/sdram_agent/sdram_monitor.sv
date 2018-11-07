@@ -37,11 +37,22 @@ class sdram_monitor extends uvm_monitor;
 
     task run_phase(uvm_phase phase);
         fork
+            mon_reset();
             mon_write();
             mon_read();
         join
     endtask
 
+    task mon_reset();
+        sdram_tlm tlm;
+        forever begin
+            @(posedge vif_wb.reset)
+            tlm = new();
+            tlm.cmd = RESET;
+            @(negedge vif_wb.reset)
+            ch_out.write(tlm);
+        end
+    endtask
 
     task mon_write();
         sdram_tlm tlm;
@@ -56,7 +67,7 @@ class sdram_monitor extends uvm_monitor;
                     @(posedge vif_wb.clk);
                 while(vif_wb.ack_o!='d0);
                 `uvm_info("SDRAM MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
-                ch_out.put(tlm);
+                ch_out.write(tlm);
             end
         end
     endtask
@@ -79,7 +90,7 @@ class sdram_monitor extends uvm_monitor;
                 end while(vif_wb.dat_o === prev_data);
                 tlm.data = vif_wb.dat_o;
                 `uvm_info("SDRAM MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
-                ch_out.put(tlm);
+                ch_out.write(tlm);
             end
         end
     endtask
