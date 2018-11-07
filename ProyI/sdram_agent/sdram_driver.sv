@@ -107,6 +107,7 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
         vif_wb.dat_i       <= 0;
     endtask
 
+    logic [31:0] prev_data;
     task do_read(sdram_tlm tlm);
         `uvm_info("SDRAM DRV", "Doing READ.", UVM_LOW);
         @(negedge vif_wb.clk)
@@ -120,12 +121,18 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
         do
             @(posedge vif_wb.clk);
         while(vif_wb.ack_o!='d0);
-        `uvm_info("SDRAM DRV", $psprintf("READ Addr:0x%0h completed.",tlm.addr), UVM_LOW);
+        `uvm_info("SDRAM DRV", "READ acked.", UVM_LOW);
 
         vif_wb.stb_i       <= 0;
         vif_wb.cyc_i       <= 0;
 
         vif_wb.addr_i      <= 0;
+
+        do begin
+            prev_data = vif_wb.dat_o;
+            @(posedge vif_wb.clk);
+        end while(vif_wb.dat_o === prev_data);
+        `uvm_info("SDRAM DRV", $psprintf("READ Addr:0x%0h Data:0x%0h completed.", tlm.addr, vif_wb.dat_o), UVM_LOW);
     endtask
 
 endclass : sdram_driver
