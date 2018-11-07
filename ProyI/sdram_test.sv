@@ -27,7 +27,7 @@ class sdram_test extends uvm_test;
         ok = seq.randomize() with {
            cmd == RESET;
         };
-        assert (ok) else `uvm_fatal("Randomization failed");
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
         seq.start(env.agent.sequencer);
 
         #100ns;
@@ -37,7 +37,7 @@ class sdram_test extends uvm_test;
             cmd == WRITE;
             addr == 'd1;
         };
-        assert (ok) else `uvm_fatal("Randomization failed");
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
         seq.start(env.agent.sequencer);
 
         #1000ns;
@@ -47,7 +47,7 @@ class sdram_test extends uvm_test;
             cmd == READ;
             addr == 'd1;
         };
-        assert (ok) else `uvm_fatal("Randomization failed");
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
         seq.start(env.agent.sequencer);
 
         #1000ns;
@@ -57,7 +57,7 @@ class sdram_test extends uvm_test;
             cmd == WRITE;
             addr == 'd3;
         };
-        assert (ok) else `uvm_fatal("Randomization failed");
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
         seq.start(env.agent.sequencer);
 
         #1000ns;
@@ -67,7 +67,7 @@ class sdram_test extends uvm_test;
             cmd == READ;
             addr == 'd3;
         };
-        assert (ok) else `uvm_fatal("Randomization failed");
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
         seq.start(env.agent.sequencer);
 
         #1000ns;
