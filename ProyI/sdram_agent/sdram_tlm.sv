@@ -14,7 +14,7 @@ typedef enum {
 class sdram_tlm extends uvm_sequence_item;
 
     rand sdram_cmd  cmd;
-    rand int        data;
+    rand integer    data;
     rand int        addr;
 
     `uvm_object_utils_begin(sdram_tlm)
