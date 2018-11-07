@@ -47,13 +47,17 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
             seq_item_port.get_next_item(tlm);
 
             case (tlm.cmd)
-               RESET: begin
-                  do_reset();
-               end
+                RESET: begin
+                    do_reset();
+                end
 
-               WRITE: begin
-                  do_write();
-               end
+                WRITE: begin
+                    do_write(tlm);
+                end
+
+                READ: begin
+                    do_read(tlm);
+                end
             endcase
             seq_item_port.item_done();
         end
@@ -77,8 +81,51 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
        `uvm_info("SDRAM DRV", "SDRAM Initialized.", UVM_LOW);
     endtask
 
-    task do_write();
+    task do_write(sdram_tlm tlm);
         `uvm_info("SDRAM DRV", "Doing WRITE.", UVM_LOW);
+        @(negedge vif_wb.clk)
+
+        vif_wb.sel_i       <= 4'hF;
+        vif_wb.we_i        <= 1;
+        vif_wb.stb_i       <= 1;
+        vif_wb.cyc_i       <= 1;
+
+        vif_wb.addr_i      <= tlm.addr;
+        vif_wb.dat_i       <= tlm.data;
+
+        do
+            @(posedge vif_wb.clk);
+        while(vif_wb.ack_o!='d0);
+        `uvm_info("SDRAM DRV", $psprintf("WRITE Addr:0x%0h Data:0x%0h completed.",tlm.addr,tlm.data), UVM_LOW);
+
+        vif_wb.sel_i       <= 4'h0;
+        vif_wb.we_i        <= 0;
+        vif_wb.stb_i       <= 0;
+        vif_wb.cyc_i       <= 0;
+
+        vif_wb.addr_i      <= 0;
+        vif_wb.dat_i       <= 0;
+    endtask
+
+    task do_read(sdram_tlm tlm);
+        `uvm_info("SDRAM DRV", "Doing READ.", UVM_LOW);
+        @(negedge vif_wb.clk)
+
+        vif_wb.we_i        <= 0;
+        vif_wb.stb_i       <= 1;
+        vif_wb.cyc_i       <= 1;
+
+        vif_wb.addr_i      <= tlm.addr;
+
+        do
+            @(posedge vif_wb.clk);
+        while(vif_wb.ack_o!='d0);
+        `uvm_info("SDRAM DRV", $psprintf("READ Addr:0x%0h completed.",tlm.addr), UVM_LOW);
+
+        vif_wb.stb_i       <= 0;
+        vif_wb.cyc_i       <= 0;
+
+        vif_wb.addr_i      <= 0;
     endtask
 
 endclass : sdram_driver

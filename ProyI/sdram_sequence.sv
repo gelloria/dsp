@@ -5,7 +5,7 @@ class sdram_sequence extends uvm_sequence #(sdram_tlm);
     rand int        addr;
 
     `uvm_object_utils(sdram_sequence)
-    
+
     function new(string name = "");
         super.new(name);
     endfunction: new
@@ -18,5 +18,5 @@ class sdram_sequence extends uvm_sequence #(sdram_tlm);
         start_item(req);
         finish_item(req);
     endtask
-endclass
 
+endclass

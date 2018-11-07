@@ -27,6 +27,44 @@ class sdram_test extends uvm_test;
            cmd == RESET;
         } );
         seq.start(env.agent.sequencer);
+
+        #100ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        assert(seq.randomize() with {
+            cmd == WRITE;
+            addr == 'd1;
+        } );
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        assert(seq.randomize() with {
+            cmd == READ;
+            addr == 'd1;
+        } );
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        assert(seq.randomize() with {
+            cmd == WRITE;
+            addr == 'd3;
+        } );
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
+
+        seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        assert(seq.randomize() with {
+            cmd == READ;
+            addr == 'd3;
+        } );
+        seq.start(env.agent.sequencer);
+
+        #1000ns;
         phase.drop_objection(.obj(this));
     endtask
 
