@@ -57,7 +57,7 @@ class sdram_monitor extends uvm_monitor;
     task mon_write();
         sdram_tlm tlm;
         forever begin
-            @(negedge vif_wb.clk)
+            @(posedge vif_wb.clk)
             if (vif_wb.we_i == 1 && vif_wb.stb_i == 1) begin
                 tlm = new();
                 tlm.cmd = WRITE;
@@ -72,11 +72,11 @@ class sdram_monitor extends uvm_monitor;
         end
     endtask
 
-    logic [31:0] prev_data;
+    logic [31:0] counter;
     task mon_read();
         sdram_tlm tlm;
         forever begin
-            @(negedge vif_wb.clk)
+            @(posedge vif_wb.clk)
             if (vif_wb.we_i == 0 && vif_wb.stb_i == 1) begin
                 tlm = new();
                 tlm.cmd = READ;
@@ -84,10 +84,12 @@ class sdram_monitor extends uvm_monitor;
                 do
                     @(posedge vif_wb.clk);
                 while(vif_wb.ack_o!='d0);
+
+                counter = 0;
                 do begin
-                    prev_data = vif_wb.dat_o;
+                    counter += 1;
                     @(posedge vif_wb.clk);
-                end while(vif_wb.dat_o === prev_data);
+                end while(counter < 26);
                 tlm.data = vif_wb.dat_o;
                 `uvm_info("SDRAM MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
                 ch_out.write(tlm);

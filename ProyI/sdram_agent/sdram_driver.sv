@@ -82,6 +82,8 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
     endtask
 
     task do_write(sdram_tlm tlm);
+        logic [31:0] write_counter;
+
         `uvm_info("SDRAM DRV", "Doing WRITE.", UVM_LOW);
         @(negedge vif_wb.clk)
 
@@ -93,9 +95,12 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
         vif_wb.addr_i      <= tlm.addr;
         vif_wb.dat_i       <= tlm.data;
 
-        do
+        write_counter = 0;
+        do begin
+            write_counter += 1;
             @(posedge vif_wb.clk);
-        while(vif_wb.ack_o!='d0);
+        end while(vif_wb.ack_o!='d0);
+        if (write_counter < 2) `uvm_error("SDRAM DRV", "No ack detected for write operation");
         `uvm_info("SDRAM DRV", $psprintf("WRITE Addr:0x%0h Data:0x%0h completed.",tlm.addr,tlm.data), UVM_LOW);
 
         vif_wb.sel_i       <= 4'h0;
@@ -107,8 +112,9 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
         vif_wb.dat_i       <= 0;
     endtask
 
-    logic [31:0] prev_data;
     task do_read(sdram_tlm tlm);
+        logic [31:0] read_counter;
+
         `uvm_info("SDRAM DRV", "Doing READ.", UVM_LOW);
         @(negedge vif_wb.clk)
 
@@ -118,19 +124,23 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
 
         vif_wb.addr_i      <= tlm.addr;
 
-        do
+        read_counter = 0;
+        do begin
+            read_counter += 1;
             @(posedge vif_wb.clk);
-        while(vif_wb.ack_o!='d0);
+        end while(vif_wb.ack_o!='d0);
+        if (read_counter < 2) `uvm_error("SDRAM DRV", "No ack detected for read operation");
 
         vif_wb.stb_i       <= 0;
         vif_wb.cyc_i       <= 0;
 
         vif_wb.addr_i      <= 0;
 
+        read_counter = 0;
         do begin
-            prev_data = vif_wb.dat_o;
+            read_counter += 1;
             @(posedge vif_wb.clk);
-        end while(vif_wb.dat_o === prev_data);
+        end while(read_counter < 26);
         `uvm_info("SDRAM DRV", $psprintf("READ Addr:0x%0h Data:0x%0h completed.", tlm.addr, vif_wb.dat_o), UVM_LOW);
     endtask
 
