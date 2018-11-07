@@ -49,42 +49,40 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
             case (tlm.cmd)
                 RESET: begin
                     do_reset();
+                    #100ns;
                 end
 
                 WRITE: begin
                     do_write(tlm);
+                    #1000ns;
                 end
 
                 READ: begin
                     do_read(tlm);
+                    #1000ns;
                 end
             endcase
             seq_item_port.item_done();
         end
     endtask
 
-
-    task drv();
-        `uvm_info("SDRAM DRV", "Function to drive the DUT pins.", UVM_LOW);
-    endtask
-
     task do_reset();
-       `uvm_info("SDRAM DRV", "Applying RESET.", UVM_LOW);
+       `uvm_info("SDRAM_DRV", "Applying RESET.", UVM_LOW);
         vif_sdram.reset_n  <= 1'b0;
         vif_wb.reset       <= 1'b1;
         #10000ns;
-       `uvm_info("SDRAM DRV", "Releasing RESET.", UVM_LOW);
+       `uvm_info("SDRAM_DRV", "Releasing RESET.", UVM_LOW);
         vif_sdram.reset_n  <= 1'b1;
         vif_wb.reset       <= 1'b0;
         #1000ns;
         wait(vif_sdram.init_done);
-       `uvm_info("SDRAM DRV", "SDRAM Initialized.", UVM_LOW);
+       `uvm_info("SDRAM_DRV", "SDRAM Initialized.", UVM_LOW);
     endtask
 
     task do_write(sdram_tlm tlm);
         logic [31:0] write_counter;
 
-        `uvm_info("SDRAM DRV", "Doing WRITE.", UVM_LOW);
+        `uvm_info("SDRAM_DRV", "Doing WRITE.", UVM_LOW);
         @(negedge vif_wb.clk)
 
         vif_wb.sel_i       <= 4'hF;
@@ -100,8 +98,8 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
             write_counter += 1;
             @(posedge vif_wb.clk);
         end while(vif_wb.ack_o!='d0);
-        if (write_counter < 2) `uvm_error("SDRAM DRV", "No ack detected for write operation");
-        `uvm_info("SDRAM DRV", $psprintf("WRITE Addr:0x%0h Data:0x%0h completed.",tlm.addr,tlm.data), UVM_LOW);
+        if (write_counter < 2) `uvm_error("SDRAM_DRV", "No ack detected for write operation");
+        `uvm_info("SDRAM_DRV", $psprintf("WRITE Addr:0x%0h Data:0x%0h completed.",tlm.addr,tlm.data), UVM_LOW);
 
         vif_wb.sel_i       <= 4'h0;
         vif_wb.we_i        <= 0;
@@ -115,7 +113,7 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
     task do_read(sdram_tlm tlm);
         logic [31:0] read_counter;
 
-        `uvm_info("SDRAM DRV", "Doing READ.", UVM_LOW);
+        `uvm_info("SDRAM_DRV", "Doing READ.", UVM_LOW);
         @(negedge vif_wb.clk)
 
         vif_wb.we_i        <= 0;
@@ -129,7 +127,7 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
             read_counter += 1;
             @(posedge vif_wb.clk);
         end while(vif_wb.ack_o!='d0);
-        if (read_counter < 2) `uvm_error("SDRAM DRV", "No ack detected for read operation");
+        if (read_counter < 2) `uvm_error("SDRAM_DRV", "No ack detected for read operation");
 
         vif_wb.stb_i       <= 0;
         vif_wb.cyc_i       <= 0;
@@ -141,7 +139,7 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
             read_counter += 1;
             @(posedge vif_wb.clk);
         end while(read_counter < 26);
-        `uvm_info("SDRAM DRV", $psprintf("READ Addr:0x%0h Data:0x%0h completed.", tlm.addr, vif_wb.dat_o), UVM_LOW);
+        `uvm_info("SDRAM_DRV", $psprintf("READ Addr:0x%0h Data:0x%0h completed.", tlm.addr, vif_wb.dat_o), UVM_LOW);
     endtask
 
 endclass : sdram_driver

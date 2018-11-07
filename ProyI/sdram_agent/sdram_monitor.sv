@@ -66,7 +66,7 @@ class sdram_monitor extends uvm_monitor;
                 do
                     @(posedge vif_wb.clk);
                 while(vif_wb.ack_o!='d0);
-                `uvm_info("SDRAM MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
+                `uvm_info("SDRAM_MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
                 ch_out.write(tlm);
             end
         end
@@ -91,7 +91,7 @@ class sdram_monitor extends uvm_monitor;
                     @(posedge vif_wb.clk);
                 end while(counter < 26);
                 tlm.data = vif_wb.dat_o;
-                `uvm_info("SDRAM MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
+                `uvm_info("SDRAM_MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
                 ch_out.write(tlm);
             end
         end

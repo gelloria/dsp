@@ -4,6 +4,10 @@ class sdram_sequence extends uvm_sequence #(sdram_tlm);
     rand int        data;
     rand int        addr;
 
+    constraint memspace {
+        addr inside {[0:12'hFFF]};
+    }
+
     `uvm_object_utils(sdram_sequence)
 
     function new(string name = "");
