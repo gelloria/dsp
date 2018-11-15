@@ -138,7 +138,7 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
         do begin
             read_counter += 1;
             @(posedge vif_wb.clk);
-        end while(read_counter < 26);
+        end while(read_counter < 85);
         `uvm_info("SDRAM_DRV", $psprintf("READ Addr:0x%0h Data:0x%0h completed.", tlm.addr, vif_wb.dat_o), UVM_LOW);
     endtask
 

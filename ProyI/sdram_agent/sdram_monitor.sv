@@ -89,7 +89,7 @@ class sdram_monitor extends uvm_monitor;
                 do begin
                     counter += 1;
                     @(posedge vif_wb.clk);
-                end while(counter < 26);
+                end while(counter < 85);
                 tlm.data = vif_wb.dat_o;
                 `uvm_info("SDRAM_MON", $psprintf("Detected: %s", tlm.print()), UVM_LOW);
                 ch_out.write(tlm);
