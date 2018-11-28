@@ -76,10 +76,15 @@ module tb_top();
    //--------------------------------------------
    // Whitebox connections
    //--------------------------------------------
-   assign wh.clk = wb.clk;
-   assign wh.reset = wb.reset;
+   assign wh.clk_i = u_dut.u_wb2sdrc.wb_clk_i;
+   assign wh.rst_i = u_dut.u_wb2sdrc.wb_rst_i;
+   assign wh.cyc_i = u_dut.u_wb2sdrc.wb_cyc_i;
+   assign wh.stb_i = u_dut.u_wb2sdrc.wb_stb_i;
+   assign wh.ack_o = u_dut.u_wb2sdrc.wb_ack_o;
 
-   //SDRAM Controller
+   //--------------------------------------------
+   // SDRAM Controller
+   //--------------------------------------------
    sdrc_top #(.SDR_DW(16),.SDR_BW(2)) u_dut(
       .cfg_sdr_width      (2'b01              ),
       .cfg_colbits        (2'b00              ), // 8 Bit Column Address
