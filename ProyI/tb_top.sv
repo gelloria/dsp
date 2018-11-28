@@ -7,6 +7,7 @@
 
 `include "sdram_ifc.svh"
 `include "wb_ifc.svh"
+`include "wh_ifc.svh"
 
 
 import uvm_pkg::*;
@@ -61,10 +62,22 @@ module tb_top();
    // -------------------------------------
    wb_ifc wb();
 
+   //--------------------------------------
+   // Whitebox Interface
+   // -------------------------------------
+   wh_ifc wh();
+
    //--------------------------------------------
    // SDRAM I/F
    //--------------------------------------------
    sdram_ifc sdram();
+
+
+   //--------------------------------------------
+   // Whitebox connections
+   //--------------------------------------------
+   assign wh.clk = wb.clk;
+   assign wh.reset = wb.reset;
 
    //SDRAM Controller
    sdrc_top #(.SDR_DW(16),.SDR_BW(2)) u_dut(
@@ -131,7 +144,10 @@ module tb_top();
    initial begin
       uvm_config_db#(virtual sdram_ifc)::set(uvm_root::get(), "*", "sdram_ifc", sdram);
       uvm_config_db#(virtual wb_ifc)::set(uvm_root::get(), "*", "wb_ifc", wb);
+      uvm_config_db#(virtual wh_ifc)::set(uvm_root::get(), "*", "wh_ifc", wh);
 
       run_test("sdram_test");
    end
+
+   //Assertions
 endmodule

@@ -9,6 +9,7 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
 
     virtual sdram_ifc vif_sdram;
     virtual wb_ifc vif_wb;
+    virtual wh_ifc vif_wh;
 
     `uvm_component_utils(sdram_driver)
 
@@ -28,6 +29,10 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
         void'(uvm_resource_db#(virtual wb_ifc)::read_by_name(.scope("*"), .name("wb_ifc"), .val(vif_wb)));
         if( vif_wb==null )
             `uvm_fatal("SDRAM_DRV","Cannot get vif_wb");
+
+        void'(uvm_resource_db#(virtual wh_ifc)::read_by_name(.scope("*"), .name("wh_ifc"), .val(vif_wh)));
+        if( vif_wh==null )
+            `uvm_fatal("SDRAM_DRV","Cannot get vif_wh");
    endfunction
 
 
