@@ -5,14 +5,14 @@
 * |---------------------------------------------------------------|
 */
 
-`include "sdram_ifc.svh"
-`include "wb_ifc.svh"
-`include "wh_ifc.svh"
 
 
 import uvm_pkg::*;
 `include "uvm_macros.svh"
 
+`include "sdram_ifc.svh"
+`include "wb_ifc.svh"
+`include "wh_ifc.svh"
 
 `include "sdram_pkg.sv"
 import sdram_pkg::*;

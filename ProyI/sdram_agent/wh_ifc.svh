@@ -13,4 +13,11 @@ interface wh_ifc;
     logic stb_i;
     logic ack_o;
 
+    property wb300;
+        @(posedge clk_i) $rose(rst_i) |-> $fell(rst_i);
+    endproperty
+
+    aP: assert property (wb300) else `uvm_error("SDRAM_ASSRT", "Property wb300 has failed");
+    cP: cover property (wb300) else `uvm_info("SDRAM_ASSRT", "Property wb300 has failed");
+
 endinterface : wh_ifc
