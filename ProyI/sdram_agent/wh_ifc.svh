@@ -14,7 +14,7 @@ interface wh_ifc;
     logic ack_o;
 
     property wb300;
-        @(posedge clk_i) $rose(rst_i) |-> $fell(rst_i); //What does it mean by INITIALIZED STATE?
+        @(posedge clk_i) 1; //What does it mean by INITIALIZED STATE?
     endproperty
     wb300_asrt: assert property (wb300) else $display("[SDRAM_ASSRT] Property wb300 has failed");
     wb300_covr: cover property (wb300) $display("[SDRAM_ASSRT] Property wb300 has passed");
@@ -26,7 +26,7 @@ interface wh_ifc;
     wb305_covr: cover property (wb305) $display("[SDRAM_ASSRT] Property wb305 has passed");
 
     property wb310;
-        @(posedge clk_i) $rose(rst_i) |-> ##[1:$] $fell(rst_i); //What does it mean by reacting?
+        @(posedge clk_i) 1; //What does it mean by reacting?
     endproperty
     wb310_asrt: assert property (wb310) else $display("[SDRAM_ASSRT] Property wb310 has failed");
     wb310_covr: cover property (wb310) $display("[SDRAM_ASSRT] Property wb310 has passed");
