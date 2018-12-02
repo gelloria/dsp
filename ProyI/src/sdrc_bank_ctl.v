@@ -312,19 +312,13 @@ parameter  SDR_BW = 2;   // SDR Byte Width
 
    // synopsys translate_off
 
-   always @ (posedge clk) begin
+   ASSERT_BANK_OVERFLOW: assert property( @(posedge clk)
+      rank_fifo_wr===1'b1 && rank_fifo_rd!==1'd1 |-> rank_cnt<3'h4
+   ) else $error("Bank: overflow!");
 
-      if (~rank_fifo_wr & rank_fifo_rd && rank_cnt == 3'h0) begin
-     $display ("%t: %m: ERROR!!! Read from empty Fifo", $time);
-     $stop;
-      end // if (rank_fifo_rd && rank_cnt == 3'h0)
-
-      if (rank_fifo_wr && ~rank_fifo_rd && rank_cnt == 3'h4) begin
-     $display ("%t: %m: ERROR!!! Write to full Fifo", $time);
-     $stop;
-      end // if (rank_fifo_wr && ~rank_fifo_rd && rank_cnt == 3'h4)
-
-   end // always @ (posedge clk)
+   ASSERT_BANK_UNDERFLOW: assert property( @(posedge clk)
+      rank_fifo_wr!==1'b1 && rank_fifo_rd===1'd1 |-> rank_cnt>3'h0
+   ) else $error("Bank: underflow!");
 
    // synopsys translate_on
 
