@@ -80,6 +80,16 @@ module tb_top();
    assign wh.stb_i = u_dut.u_wb2sdrc.wb_stb_i;
    assign wh.ack_o = u_dut.u_wb2sdrc.wb_ack_o;
 
+   assign wh.ifc_stb_i  = wb.stb_i;
+   assign wh.ifc_ack_o  = wb.ack_o;
+   assign wh.ifc_addr_i = wb.addr_i;
+   assign wh.ifc_we_i   = wb.we_i;
+   assign wh.ifc_dat_i  = wb.dat_i;
+   assign wh.ifc_sel_i  = wb.sel_i;
+   assign wh.ifc_dat_o  = 0; //FIXME
+   assign wh.ifc_cyc_i  = wb.cyc_i;
+   assign wh.ifc_cti_i  = 0; //FIXME
+
    //--------------------------------------------
    // SDRAM Controller
    //--------------------------------------------
