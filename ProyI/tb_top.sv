@@ -149,7 +149,10 @@ module tb_top();
       uvm_config_db#(virtual wb_ifc)::set(uvm_root::get(), "*", "wb_ifc", wb);
       uvm_config_db#(virtual wh_ifc)::set(uvm_root::get(), "*", "wh_ifc", wh);
 
-      run_test("sdram_test");
+     `ifdef SV_TEST
+        `define STR_TEST(test) `"test`"
+        run_test(`STR_TEST(`SV_TEST));
+     `endif
    end
 
    //Assertions

@@ -27,5 +27,8 @@ package sdram_pkg;
     `include "sdram_sequence.sv"
 
     //Tests
-    `include "sdram_test.sv"
+    `include "sdram_base_test.sv"
+    `include "sdram_test_with_eot.sv"
+    `include "sdram_test_with_some_resets.sv"
+
 endpackage
