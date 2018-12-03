@@ -5,21 +5,19 @@
 * |---------------------------------------------------------------|
 */
 
-class sdram_test_with_some_resets extends sdram_test_with_eot;
+class sdram_rw_reset_test extends sdram_read_write_test;
 
-   `uvm_component_utils(sdram_test_with_some_resets)
+   `uvm_component_utils(sdram_rw_reset_test)
 
     function new (string name="test", uvm_component parent=null);
         super.new (name, parent);
     endfunction
 
-
-    task run_phase(uvm_phase phase);
-        phase.raise_objection(.obj(this));
-
-        fork
+    task main_phase(uvm_phase phase);
+       phase.raise_objection(.obj(this));
+       fork
            begin
-               super.run_phase(phase);
+               super.main_phase(phase);
            end
 
            begin
@@ -28,9 +26,8 @@ class sdram_test_with_some_resets extends sdram_test_with_eot;
                #100000ns;
                reset();
            end
-        join
-
-        phase.drop_objection(.obj(this));
+       join
+       phase.drop_objection(.obj(this));
     endtask
 
-endclass : sdram_test_with_some_resets
+endclass : sdram_rw_reset_test

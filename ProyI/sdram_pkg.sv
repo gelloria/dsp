@@ -28,7 +28,9 @@ package sdram_pkg;
 
     //Tests
     `include "sdram_base_test.sv"
-    `include "sdram_test_with_eot.sv"
-    `include "sdram_test_with_some_resets.sv"
+    `include "sdram_read_test.sv"
+    `include "sdram_write_test.sv"
+    `include "sdram_read_write_test.sv"
+    `include "sdram_rw_reset_test.sv"
 
 endpackage
