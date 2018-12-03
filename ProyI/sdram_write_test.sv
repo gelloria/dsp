@@ -15,7 +15,6 @@ class sdram_write_test extends sdram_base_test;
 
     task main_phase(uvm_phase phase);
        phase.raise_objection(.obj(this));
-       #5000ns;
        do_writes();
        phase.drop_objection(.obj(this));
     endtask
