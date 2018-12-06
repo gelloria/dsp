@@ -40,11 +40,34 @@ module tb_top();
    reg            sdram_clk;
    reg            sys_clk;
 
-   initial        sys_clk = 0;
-   initial        sdram_clk = 0;
+   int unsigned phase;
 
-   always #(P_SYS/2) sys_clk = !sys_clk;
-   always #(P_SDR/2) sdram_clk = !sdram_clk;
+   covergroup async_clocks_c;
+      coverpoint phase {
+         ignore_bins out_of_range = {[21:'hFFFF_FFFF]};
+      }
+   endgroup
+
+   initial begin
+      sys_clk = 0;
+      while (1) begin
+         sys_clk = !sys_clk;
+         #(P_SYS/2);
+      end
+   end
+
+   initial begin
+      async_clocks_c async_clocks = new;
+      sdram_clk = 0;
+      phase = $urandom_range(0, 20);
+      #(phase * 1ns);
+      async_clocks.sample();
+      while (1) begin
+         sdram_clk = !sdram_clk;
+         #(P_SDR/2);
+      end
+   end
+
 
    // to fix the sdram interface timing issue
    wire #(2.0) clk_d = sdram_clk;
