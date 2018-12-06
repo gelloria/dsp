@@ -24,8 +24,7 @@ class sdram_wr_addr_test extends sdram_base_test;
        int addr_i;
 
        for(int loops = 0; loops < 10; loops++) begin
-           addr_i = loops;
-           $display("DANIEL: addr=%0d", addr_i);
+           addr_i = $urandom_range(0,12'hFFF);
            seq = sdram_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
            ok = seq.randomize() with {
                addr == addr_i;

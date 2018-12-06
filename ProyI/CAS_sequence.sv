@@ -3,7 +3,7 @@ class CAS_sequence extends uvm_sequence #(CAS_tlm);
     rand int    cfg_sdr_cas;
 
     constraint memspace {
-        cfg_sdr_cas inside {[1:2]};
+        cfg_sdr_cas inside {[2:3]};
     }
 
     `uvm_object_utils(CAS_sequence)
