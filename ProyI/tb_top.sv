@@ -27,11 +27,40 @@ import sdram_pkg::*;
 `include "sdrc_bank_fsm.v"
 `include "sdrc_xfr_ctl.v"
 `include "sdrc_bs_convert.v"
-`include "IS42VM16400K.v"
+
+`ifdef SDRAM_16BIT
+   `include "IS42VM16400K.v"
+`endif
+
+`ifdef SDRAM_8BIT
+   `include "mt48lc8m8a2.v"
+`endif
+
+`ifdef SDRAM_32BIT
+   `include "mt48lc2m32b2.v"
+`endif
 
 
 
 module tb_top();
+
+   `ifdef SDRAM_8BIT
+      `define SDRAM_DW 8
+      `define SDRAM_BW 1
+      `define SDRAM_WIDTH 2'b10
+   `endif
+
+   `ifdef SDRAM_16BIT
+      `define SDRAM_DW 16
+      `define SDRAM_BW 2
+      `define SDRAM_WIDTH 2'b01
+   `endif
+
+   `ifdef SDRAM_32BIT
+      `define SDRAM_DW 32
+      `define SDRAM_BW 4
+      `define SDRAM_WIDTH 2'b00
+   `endif
 
    //Clock periods
    parameter      P_SYS  = 10;     //    200MHz
@@ -123,8 +152,8 @@ module tb_top();
    //--------------------------------------------
    // SDRAM Controller
    //--------------------------------------------
-   sdrc_top #(.SDR_DW(16),.SDR_BW(2)) u_dut(
-      .cfg_sdr_width      (2'b01              ),
+   sdrc_top #(.SDR_DW(`SDRAM_DW),.SDR_BW(`SDRAM_BW)) u_dut(
+      .cfg_sdr_width      (`SDRAM_WIDTH       ),
       .cfg_colbits        (2'b00              ), // 8 Bit Column Address
 
       /* WISH BONE */
@@ -150,10 +179,10 @@ module tb_top();
       .sdr_ras_n          (sdram.ras_n        ),
       .sdr_cas_n          (sdram.cas_n        ),
       .sdr_we_n           (sdram.we_n         ),
-      .sdr_dqm            (sdram.dqm          ),
+      .sdr_dqm            (sdram.dqm[`SDRAM_BW-1:0]   ),
       .sdr_ba             (sdram.ba           ),
       .sdr_addr           (sdram.addr         ),
-      .sdr_dq             (sdram.dq           ),
+      .sdr_dq             (sdram.dq[`SDRAM_DW-1:0]    ),
 
       /* Parameters */
       .sdr_init_done      (sdram.init_done    ),
@@ -170,19 +199,72 @@ module tb_top();
       .cfg_sdr_rfmax      (3'h6               )
    );
 
-   //SDRAM
-   IS42VM16400K u_sdram16 (
-      .clk                (clk_d              ),
-      .cke                (sdram.cke          ),
-      .csb                (sdram.cs_n         ),
-      .rasb               (sdram.ras_n        ),
-      .casb               (sdram.cas_n        ),
-      .web                (sdram.we_n         ),
-      .dqm                (sdram.dqm          ),
-      .ba                 (sdram.ba           ),
-      .addr               (sdram.addr[11:0]   ),
-      .dq                 (sdram.dq           )
-   );
+   int unsigned data_width; // =`SDRAM_DW;
+   covergroup sdram_data_width_c;
+      option.per_instance = 1;
+      data_width : coverpoint data_width {
+         bins DW_8BITS  = {8};
+         bins DW_16BITS = {16};
+         bins DW_32BITS = {32};
+        //ignore_bins out_of_range = {8, 16, 32};
+      }
+   endgroup
+
+   initial begin
+      sdram_data_width_c sdram_data_width = new();
+      data_width = `SDRAM_DW;
+      sdram_data_width.set_inst_name("sdram_data_width");
+      sdram_data_width.sample();
+   end
+
+   `ifdef SDRAM_8BIT
+      //SDRAM 8BITS
+      mt48lc8m8a2 #(.data_bits(8)) u_sdram8 (
+         .Clk                (clk_d              ),
+         .Cke                (sdram.cke          ),
+         .Cs_n               (sdram.cs_n         ),
+         .Ras_n              (sdram.ras_n         ),
+         .Cas_n              (sdram.cas_n        ),
+         .We_n               (sdram.we_n         ),
+         .Dqm                (sdram.dqm[`SDRAM_BW-1:0]   ),
+         .Ba                 (sdram.ba           ),
+         .Addr               (sdram.addr[11:0]   ),
+         .Dq                 (sdram.dq[`SDRAM_DW-1:0]    )
+      );
+   `endif
+
+   `ifdef SDRAM_16BIT
+      //SDRAM 16BITS
+      IS42VM16400K u_sdram16 (
+         .clk                (clk_d              ),
+         .cke                (sdram.cke          ),
+         .csb                (sdram.cs_n         ),
+         .rasb               (sdram.ras_n        ),
+         .casb               (sdram.cas_n        ),
+         .web                (sdram.we_n         ),
+         .dqm                (sdram.dqm[`SDRAM_BW-1:0]   ),
+         .ba                 (sdram.ba           ),
+         .addr               (sdram.addr[11:0]   ),
+         .dq                 (sdram.dq[`SDRAM_DW-1:0]    )
+      );
+   `endif
+
+   `ifdef SDRAM_32BIT
+      //SDRAM 32BITS
+      mt48lc2m32b2 #(.data_bits(32)) u_sdram32 (
+         .Clk                (clk_d              ),
+         .Cke                (sdram.cke          ),
+         .Cs_n               (sdram.cs_n         ),
+         .Ras_n              (sdram.ras_n        ),
+         .Cas_n              (sdram.cas_n        ),
+         .We_n               (sdram.we_n         ),
+         .Dqm                (sdram.dqm[`SDRAM_BW-1:0]   ),
+         .Ba                 (sdram.ba           ),
+         .Addr               (sdram.addr[10:0]   ),
+         .Dq                 (sdram.dq[`SDRAM_DW-1:0]    )
+      );
+   `endif
+
 
    initial begin
       uvm_config_db#(virtual CAS_ifc)::set(uvm_root::get(), "*", "cas_ifc", cas);

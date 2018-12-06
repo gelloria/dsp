@@ -46,6 +46,7 @@ class CAS_driver extends uvm_driver#(CAS_tlm);
             tlm = new();
             seq_item_port.get_next_item(tlm);
             $display("CAS config: %0d",tlm.cfg_sdr_cas);
+            cas_cov.sample();
             vif.cfg_sdr_cas <= tlm.cfg_sdr_cas;
             seq_item_port.item_done();
         end

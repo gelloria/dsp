@@ -10,8 +10,8 @@ interface sdram_ifc();
     logic clk;
     logic reset_n;
 
-    wire [15:0]            dq; // SDRAM Read/Write Data Bus
-    logic [1:0]            dqm; // SDRAM DATA Mask
+    wire  [31:0]           dq; // SDRAM Read/Write Data Bus
+    logic [3:0]            dqm; // SDRAM DATA Mask
     logic [1:0]            ba; // SDRAM Bank Select
     logic [12:0]           addr; // SDRAM ADRESS
     logic                  init_done; // SDRAM Init Done
