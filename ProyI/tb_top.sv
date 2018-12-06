@@ -5,6 +5,7 @@
 * |---------------------------------------------------------------|
 */
 
+`include "CAS_ifc.svh"
 `include "sdram_ifc.svh"
 `include "wb_ifc.svh"
 `include "wh_ifc.svh"
@@ -43,6 +44,7 @@ module tb_top();
    int unsigned phase;
 
    covergroup async_clocks_c;
+      option.per_instance = 1;
       coverpoint phase {
          ignore_bins out_of_range = {[21:'hFFFF_FFFF]};
       }
@@ -57,7 +59,8 @@ module tb_top();
    end
 
    initial begin
-      async_clocks_c async_clocks = new;
+      async_clocks_c async_clocks = new();
+      async_clocks.set_inst_name("asyn_clocks_c");
       sdram_clk = 0;
       phase = $urandom_range(0, 20);
       #(phase * 1ns);
@@ -93,6 +96,10 @@ module tb_top();
    //--------------------------------------------
    sdram_ifc sdram();
 
+   //--------------------------------------------
+   // CAS I/F
+   //--------------------------------------------
+   CAS_ifc cas();
 
    //--------------------------------------------
    // Whitebox connections
@@ -152,11 +159,11 @@ module tb_top();
       .sdr_init_done      (sdram.init_done    ),
       .cfg_req_depth      (2'h3               ), //how many req. buffer should hold
       .cfg_sdr_en         (1'b1               ),
-      .cfg_sdr_mode_reg   (13'h033            ),
+      .cfg_sdr_mode_reg   ({6'h0,cas.cfg_sdr_cas,4'd3}),
       .cfg_sdr_tras_d     (4'h4               ),
       .cfg_sdr_trp_d      (4'h2               ),
       .cfg_sdr_trcd_d     (4'h2               ),
-      .cfg_sdr_cas        (3'h3               ),
+      .cfg_sdr_cas        (cas.cfg_sdr_cas    ),
       .cfg_sdr_trcar_d    (4'h7               ),
       .cfg_sdr_twr_d      (4'h1               ),
       .cfg_sdr_rfsh       (12'h100            ), // reduced from 12'hC35
@@ -178,6 +185,7 @@ module tb_top();
    );
 
    initial begin
+      uvm_config_db#(virtual CAS_ifc)::set(uvm_root::get(), "*", "cas_ifc", cas);
       uvm_config_db#(virtual sdram_ifc)::set(uvm_root::get(), "*", "sdram_ifc", sdram);
       uvm_config_db#(virtual wb_ifc)::set(uvm_root::get(), "*", "wb_ifc", wb);
       uvm_config_db#(virtual wh_ifc)::set(uvm_root::get(), "*", "wh_ifc", wh);

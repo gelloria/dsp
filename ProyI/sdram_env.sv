@@ -7,6 +7,7 @@
 
 class sdram_env extends uvm_env;
 
+    CAS_agent           cas;
     sdram_agent         agent;
     sdram_scoreboard    scb;
 
@@ -19,6 +20,7 @@ class sdram_env extends uvm_env;
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
 
+        cas = CAS_agent::type_id::create("cas", this);
         agent = sdram_agent::type_id::create("agent", this);
         scb = sdram_scoreboard::type_id::create("scb", this);
     endfunction

@@ -11,11 +11,24 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
     virtual wb_ifc vif_wb;
     virtual wh_ifc vif_wh;
 
+    sdram_tlm tlm;
+
     `uvm_component_utils(sdram_driver)
 
+    covergroup sdram_cov @(posedge vif_wb.clk);
+        option.per_instance = 1;
+        command : coverpoint tlm.cmd {
+            bins reset = {RESET};
+            bins read  = {READ};
+            bins write = {WRITE};
+        }
+    endgroup
 
     function new (string name, uvm_component parent = null);
         super.new(name, parent);
+
+        sdram_cov = new();
+        sdram_cov.set_inst_name("sdram_cov");
     endfunction
 
 
@@ -48,7 +61,7 @@ class sdram_driver extends uvm_driver#(sdram_tlm);
         vif_wb.cyc_i       <= 0;
 
         forever begin
-            sdram_tlm tlm = new();
+            tlm = new();
             seq_item_port.get_next_item(tlm);
 
             case (tlm.cmd)

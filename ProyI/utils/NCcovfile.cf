@@ -1,0 +1,18 @@
+# set block, expression and toggle coverage on all modules by default
+select_coverage -block -expr -toggle -instance *...
+
+# turn on sva and sv cover groups coverage
+select_functional
+
+# set coverage options (see iccqrg for more information)
+set_assign_scoring
+set_branch_scoring
+set_expr_scoring -all
+set_libcell_scoring
+set_implicit_block_scoring -off
+set_subprogram_scoring -used
+set_optimize -ial_ovl_inst_asrt
+set_fsm_scoring -hold_transition
+
+# deselect common library files
+#deselect_coverage -bet -module coe_*

@@ -9,6 +9,7 @@ class sdram_base_test extends uvm_test;
 
     sdram_env env;
     sdram_sequence seq;
+    CAS_sequence   cas_seq;
 
    `uvm_component_utils(sdram_base_test)
 
@@ -22,7 +23,10 @@ class sdram_base_test extends uvm_test;
        phase.raise_objection(.obj(this));
        `uvm_info("SDRAM_TEST", "Start of test", UVM_LOW);
        #1000ns;
+       cas_config();
+       #100ns;
        reset();
+       #100ns;
        phase.drop_objection(.obj(this));
     endtask
 
@@ -56,5 +60,12 @@ class sdram_base_test extends uvm_test;
         seq.start(env.agent.sequencer);
     endtask
 
+    task cas_config();
+        bit ok;
+        cas_seq = CAS_sequence::type_id::create(.name("seq"), .contxt(get_full_name()));
+        ok = cas_seq.randomize();
+        assert (ok) else `uvm_fatal("SDRAM_TEST", "Randomization failed");
+        cas_seq.start(env.cas.sequencer);
+    endtask
 
 endclass : sdram_base_test
