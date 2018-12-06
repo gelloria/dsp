@@ -5,9 +5,9 @@
 * |---------------------------------------------------------------|
 */
 
-class sdram_wr_addr_test extends sdram_base_test;
+class sdram_wr_addr_reset_test extends sdram_base_test;
 
-   `uvm_component_utils(sdram_wr_addr_test)
+   `uvm_component_utils(sdram_wr_addr_reset_test)
 
     function new (string name="test", uvm_component parent=null);
         super.new (name, parent);
@@ -16,6 +16,13 @@ class sdram_wr_addr_test extends sdram_base_test;
     task main_phase(uvm_phase phase);
        phase.raise_objection(.obj(this));
        do_wr();
+       #100ns;
+
+       cas_config();
+       reset();
+       do_wr();
+
+       #100ns;
        phase.drop_objection(.obj(this));
     endtask
 
@@ -45,4 +52,4 @@ class sdram_wr_addr_test extends sdram_base_test;
        end
     endtask
 
-endclass : sdram_wr_addr_test
+endclass : sdram_wr_addr_reset_test

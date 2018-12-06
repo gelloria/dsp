@@ -150,6 +150,17 @@ module tb_top();
    assign wh.ifc_cti_i  = 0; //FIXME
 
    //--------------------------------------------
+   // CAS connections
+   //--------------------------------------------
+   assign cas.dq = sdram.dq;
+   assign cas.stb = wb.stb_i;
+   assign cas.read = ~wb.we_i;
+   assign cas.clk = sdram.clk;
+   assign cas.cas_n = sdram.cas_n;
+   assign cas.ras_n = sdram.ras_n;
+   assign cas.we_n = sdram.we_n;
+
+   //--------------------------------------------
    // SDRAM Controller
    //--------------------------------------------
    sdrc_top #(.SDR_DW(`SDRAM_DW),.SDR_BW(`SDRAM_BW)) u_dut(

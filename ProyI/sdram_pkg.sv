@@ -34,5 +34,6 @@ package sdram_pkg;
     `include "sdram_read_write_test.sv"
     `include "sdram_rw_reset_test.sv"
     `include "sdram_wr_addr_test.sv"
+    `include "sdram_wr_addr_reset_test.sv"
 
 endpackage
