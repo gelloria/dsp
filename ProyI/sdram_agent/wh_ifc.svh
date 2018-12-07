@@ -54,10 +54,10 @@ interface wh_ifc;
     wb325_asrt: assert property (wb325) else $display("[SDRAM_ASSRT] Property wb325 has failed");
     wb325_covr: cover property (wb325) $display("[SDRAM_ASSRT] Property wb325 has passed");
 
-    property wb335;
-        @(posedge clk_i) $rose(stb_i) & $rose(cyc_i) |-> $rose(ack_o); //Done. ACK response to and of stb and cyc.
-    endproperty
-    wb335_asrt: assert property (wb335) else $display("[SDRAM_ASSRT] Property wb335 has failed");
-    wb335_covr: cover property (wb335) $display("[SDRAM_ASSRT] Property wb335 has passed");
+    //property wb335;
+    //    @(posedge clk_i) $rose(stb_i) & $rose(cyc_i) |-> $rose(ack_o); //Done. ACK response to and of stb and cyc.
+    //endproperty
+    //wb335_asrt: assert property (wb335) else $display("[SDRAM_ASSRT] Property wb335 has failed");
+    //wb335_covr: cover property (wb335) $display("[SDRAM_ASSRT] Property wb335 has passed");
 
 endinterface : wh_ifc
