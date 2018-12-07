@@ -75,6 +75,26 @@ module tb_top();
    covergroup async_clocks_c;
       option.per_instance = 1;
       coverpoint phase {
+         bins b00 = {00};
+         bins b01 = {01};
+         bins b02 = {02};
+         bins b03 = {03};
+         bins b04 = {04};
+         bins b05 = {05};
+         bins b06 = {06};
+         bins b07 = {07};
+         bins b08 = {08};
+         bins b09 = {09};
+         bins b11 = {11};
+         bins b12 = {12};
+         bins b13 = {13};
+         bins b14 = {14};
+         bins b15 = {15};
+         bins b16 = {16};
+         bins b17 = {17};
+         bins b18 = {18};
+         bins b19 = {19};
+         bins b20 = {20};
          ignore_bins out_of_range = {[21:'hFFFF_FFFF]};
       }
    endgroup
